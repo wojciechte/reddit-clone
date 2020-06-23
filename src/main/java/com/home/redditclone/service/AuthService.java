@@ -1,6 +1,8 @@
 package com.home.redditclone.service;
 
 import com.home.redditclone.dto.RegisterRequest;
+import com.home.redditclone.exceptions.InvalidTokenException;
+import com.home.redditclone.exceptions.RedditCloneException;
 import com.home.redditclone.model.NotoficationEmail;
 import com.home.redditclone.model.User;
 import com.home.redditclone.model.VerificationToken;
@@ -37,7 +39,7 @@ public class AuthService {
                         user.getEmail(),
                         "please click on the below url to activate your accout : " +
                                 ACTIVATION_URL + token)
-                );
+        );
     }
 
     private User createUser(RegisterRequest registerRequest) {
@@ -59,5 +61,20 @@ public class AuthService {
         verificationTokenRepository.save(verificationToken);
 
         return token;
+    }
+
+    @Transactional
+    public void verifyAccount(String token) {
+        VerificationToken verificationToken = verificationTokenRepository.findByToken(token)
+                .orElseThrow(() -> new InvalidTokenException("Invalid Token"));
+        fetchUserAndEnable(verificationToken);
+    }
+
+    private void fetchUserAndEnable(VerificationToken verificationToken) {
+        String username = verificationToken.getUser().getUsername();
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RedditCloneException("User not found with name: " + username));
+        user.setEnabled(true);
+        userRepository.save(user);
     }
 }
