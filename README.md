@@ -8,6 +8,7 @@
 
 ##### Spring Security
 * encoding password by BCryptPasswordEncoder
+* user authentication with JWT token
 
 ##### Spring Mail
 * sending email with activation link (creating token UUID)
