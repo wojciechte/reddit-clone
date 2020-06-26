@@ -1,6 +1,8 @@
 package com.home.redditclone.service;
 
 import com.home.redditclone.dto.SubredditDto;
+import com.home.redditclone.exceptions.RedditCloneMailException;
+import com.home.redditclone.mapper.SubredditMapper;
 import com.home.redditclone.model.SubReddit;
 import com.home.redditclone.repository.SubredditRepository;
 import lombok.RequiredArgsConstructor;
@@ -16,11 +18,12 @@ import java.util.stream.Collectors;
 @Slf4j
 public class SubredditService {
 
-    final SubredditRepository subredditRepository;
+    private final SubredditRepository subredditRepository;
+    private final SubredditMapper subredditMapper;
 
     @Transactional
     public SubredditDto save(SubredditDto subredditDto) {
-        SubReddit subReddit = subredditRepository.save(mapSubredditDto(subredditDto));
+        SubReddit subReddit = subredditRepository.save(subredditMapper.mapDtoToSubreddit(subredditDto));
         subredditDto.setId(subReddit.getId());
         return subredditDto;
     }
@@ -28,22 +31,13 @@ public class SubredditService {
     @Transactional
     public List<SubredditDto> getAll() {
         return subredditRepository.findAll().stream()
-                .map(this::mapToDto)
+                .map(subredditMapper::mapSubredditToDto)
                 .collect(Collectors.toList());
     }
 
-    private SubredditDto mapToDto(SubReddit subReddit) {
-        SubredditDto dto = new SubredditDto();
-        dto.setId(subReddit.getId());
-        dto.setName(subReddit.getName());
-        dto.setDescription(subReddit.getDescription());
-        dto.setNumberOfPosts(subReddit.getPosts().size());
-        return dto;
-    }
-
-    private SubReddit mapSubredditDto(SubredditDto subredditDto) {
-        return SubReddit.builder().name(subredditDto.getName())
-                .description(subredditDto.getDescription())
-                .build();
+    public SubredditDto getSubreddit(Long id) {
+        SubReddit subReddit = subredditRepository.findById(id)
+                .orElseThrow(() -> new RedditCloneMailException("No subreddit found with id: " + id));
+        return subredditMapper.mapSubredditToDto(subReddit);
     }
 }

@@ -16,5 +16,6 @@
 
 
 ##### Additional
-* Lombok - less boilerplate code :) 
+* Lombok 
 * Thymeleaf - email template 
+* mapstruct
