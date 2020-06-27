@@ -15,7 +15,7 @@ import java.time.Instant;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class Post {
+public class  Post {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
