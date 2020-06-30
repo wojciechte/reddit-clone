@@ -24,7 +24,7 @@ public class JwtProvider {
             keyStore = KeyStore.getInstance("JKS");
             InputStream resourceAsStream = getClass().getResourceAsStream("/springblog.jks");
             keyStore.load(resourceAsStream, "secret".toCharArray());
-        } catch (KeyStoreException | CertificateException | NoSuchAlgorithmException | IOException e) {
+        } catch (KeyStoreException | CertificateException | NoSuchAlgorithmException | IOException e) {  
             throw new RedditCloneException("Exception occurred while loading keystore");
         }
     }
